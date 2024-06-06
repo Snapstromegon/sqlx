@@ -136,7 +136,6 @@ impl AsyncSemaphoreReleaser<'_> {
         #[cfg(feature = "_rt-tokio")]
         {
             self.inner.forget();
-            return;
         }
 
         #[cfg(not(any(feature = "_rt-async-std", feature = "_rt-tokio")))]

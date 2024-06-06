@@ -101,7 +101,7 @@ where
         let this = &mut *self;
 
         while !this.buf.is_empty() {
-            match this.socket.try_write(&mut this.buf) {
+            match this.socket.try_write(this.buf) {
                 Err(e) if e.kind() == io::ErrorKind::WouldBlock => {
                     ready!(this.socket.poll_write_ready(cx))?;
                 }
@@ -253,11 +253,11 @@ pub async fn connect_uds<P: AsRef<Path>, Ws: WithSocket>(
     {
         drop((path, with_socket));
 
-        return Err(io::Error::new(
+        Err(io::Error::new(
             io::ErrorKind::Unsupported,
             "Unix domain sockets are not supported on this platform",
         )
-        .into());
+        .into())
     }
 
     #[cfg(all(unix, feature = "_rt-tokio"))]
